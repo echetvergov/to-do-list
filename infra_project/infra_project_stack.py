@@ -2,6 +2,8 @@ from aws_cdk import App, Stack, CfnOutput
 from constructs import Construct
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_dynamodb as dynamodb
+from aws_cdk import aws_ecr
+from aws_cdk import Duration
 from aws_cdk.aws_lambda import FunctionUrlAuthType, HttpMethod
 
 class InfraProjectStack(Stack):
@@ -16,7 +18,7 @@ class InfraProjectStack(Stack):
                 name="task_id",
                 type=dynamodb.AttributeType.STRING
             ),
-            table_name="NewTable",
+            table_name="NewTable-2",
             time_to_live_attribute="ttl",
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST
         )
@@ -29,15 +31,23 @@ class InfraProjectStack(Stack):
             projection_type=dynamodb.ProjectionType.ALL
         )
 
-        # Create a Lambda function
-        lambda_function = _lambda.Function(
+        # Reference the ECR repository
+        repository = aws_ecr.Repository.from_repository_name(
+            self, "Repo", "api-lambda"
+        )
+
+        # Create a Lambda function using Docker image
+        lambda_function = _lambda.DockerImageFunction(
             self, "MyFunction",
-            runtime=_lambda.Runtime.PYTHON_3_11,
-            handler="lambda_function.handler",
-            code=_lambda.Code.from_asset("lambda"),
+            code=_lambda.DockerImageCode.from_ecr(
+                repository=repository,
+                tag_or_digest="latest"  # Use `tag_or_digest` instead of `tag`
+            ),
             environment={
                 "TABLE_NAME": table.table_name
-            }
+            },
+            timeout=Duration.seconds(30),
+            memory_size = 1024
         )
 
         # Grant the Lambda function read/write permissions to the DynamoDB table

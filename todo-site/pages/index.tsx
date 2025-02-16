@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import React, { useEffect } from "react";
+import Login from "../components/Login";
+import { userManager } from "../lib/authConfig";
+import React from "react";
 import Task from "../components/task";
 import TaskItem from "../components/taskItem";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 const Home: NextPage = () => {
   // TODO: Update this URL to your own API endpoint!
   const todoApiEndpoint: string =
-    "https://cv736exbi2rvfpwo45jluf3u5a0olvpe.lambda-url.ap-southeast-2.on.aws";
+    "https://ax3lbcilkbxqqyrk5374p72dhq0zjufq.lambda-url.eu-central-1.on.aws";
 
   const userId: string = "pixegami";
   const [isLoading, setIsLoading] = React.useState(true);
@@ -132,23 +135,24 @@ const Home: NextPage = () => {
     <div className="text-center text-gray-700">User ID: {userId}</div>
   );
 
-  return (
-    <div>
-      <Head>
-        <title>To-Do List App</title>
-        <meta name="description" content="To-do list app" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    return (
+      <div>
+        <Head>
+          <title>To-Do List App</title>
+          <meta name="description" content="To-do list app" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <main>
-        <h1 className="text-2xl font-bold text-center">My Tasks</h1>
-        {userIdElement}
-        {loadingStatus}
-        {taskList}
-        {taskInputField}
-      </main>
-    </div>
-  );
+        <main>
+          <h1 className="text-2xl font-bold text-center">My Tasks</h1>
+          <Login />
+          {userIdElement}
+          {loadingStatus}
+          {taskList}
+          {taskInputField}
+        </main>
+      </div>
+    );
 };
 
 export default Home;
