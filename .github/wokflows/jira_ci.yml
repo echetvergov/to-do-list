@@ -1,0 +1,23 @@
+name: Dispatch Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Your Name"
+        required: false
+        default: "User"
+      message:
+        description: "Custom Message"
+        required: false
+        default: "Hello from API"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Print Message
+        run: echo "Workflow triggered by ${{ github.event.inputs.name }}: ${{ github.event.inputs.message }}"
